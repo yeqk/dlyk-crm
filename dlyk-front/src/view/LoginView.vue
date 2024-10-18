@@ -1,4 +1,6 @@
 <script>
+import {doPost} from "../http/httpRequest.js";
+
 export default {
   name: "LoginView",
 
@@ -9,7 +11,7 @@ export default {
         loginAct: [
           { required: true, message: 'Please input username', trigger: 'blur' }
         ],
-        loginPsw: [
+        loginPwd: [
           {required: true, message: 'Please input password', trigger: 'blur'},
           { min: 6, max: 16, message: 'Length should be 6 to 16', trigger: 'blur' }
         ]
@@ -22,9 +24,14 @@ export default {
       // Validate form before submitting
       this.$refs.loginFormRef.validate(isValid => {
         if (isValid) {
-
+          let formData = new FormData();
+          formData.append('loginAct', this.user.loginAct);
+          formData.append('loginPwd', this.user.loginPwd);
+          doPost("/api/login", formData).then(res => {
+            console.log(res);
+          });
         }
-      })
+      });
     }
   }
 }
@@ -49,8 +56,8 @@ export default {
           <el-input v-model="user.loginAct" />
         </el-form-item>
 
-        <el-form-item label="Password" prop="loginPsw">
-          <el-input type="password" v-model="user.loginPsw" show-password/>
+        <el-form-item label="Password" prop="loginPwd">
+          <el-input type="password" v-model="user.loginPwd" show-password/>
         </el-form-item>
 
         <el-form-item>
