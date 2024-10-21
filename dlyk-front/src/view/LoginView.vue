@@ -1,5 +1,6 @@
 <script>
 import {doPost} from "../http/httpRequest.js";
+import {messageTip} from "../util/util.js";
 
 export default {
   name: "LoginView",
@@ -29,6 +30,13 @@ export default {
           formData.append('loginPwd', this.user.loginPwd);
           doPost("/api/login", formData).then(res => {
             console.log(res);
+            if (res.data.code === 200) {
+              messageTip('登录成功', 'success');
+              // Route to the app main page
+              window.location.href = "/dashboard";
+            } else {
+              messageTip('登录失败', 'error');
+            }
           });
         }
       });

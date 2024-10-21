@@ -2,7 +2,8 @@ import { createApp } from 'vue'
 
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
+import router from './router/index.js'
 
-import LoginView from "./view/LoginView.vue";
+import App from "./App.vue";
 
-createApp(LoginView).use(ElementPlus).mount('#app')
+createApp(App).use(ElementPlus).use(router).mount('#app');
