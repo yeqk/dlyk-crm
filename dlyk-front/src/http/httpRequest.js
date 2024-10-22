@@ -1,4 +1,5 @@
 import axios from 'axios';
+import {getTokenName} from "../util/util.js";
 
 axios.defaults.baseURL = "http://localhost:8080"
 
@@ -35,5 +36,37 @@ export function doDelete(url, params) {
         url: url,
         params: params,
         dataType: 'json'
-    });
+    })
 }
+
+// Add a request interceptor
+axios.interceptors.request.use(function (config) {
+    // Add jwt token to the header
+    let token = window.sessionStorage.getItem(getTokenName());
+    if (!token) {
+        token = window.localStorage.getItem(getTokenName());
+        if (token) {
+            config.headers['rememberMe'] = true;
+        }
+    }
+
+    if (token) {
+        config.headers['Authorization'] = token;
+    }
+
+    return config;
+}, function (error) {
+    // Do something with request error
+    return Promise.reject(error);
+});
+
+// Add a response interceptor
+axios.interceptors.response.use(function (response) {
+    // Any status code that lie within the range of 2xx cause this function to trigger
+    // Do something with response data
+    return response;
+}, function (error) {
+    // Any status codes that falls outside the range of 2xx cause this function to trigger
+    // Do something with response error
+    return Promise.reject(error);
+});

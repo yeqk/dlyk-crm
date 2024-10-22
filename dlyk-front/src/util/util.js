@@ -8,3 +8,7 @@ export function messageTip(message, type) {
         type: type,
     })
 }
+
+export function getTokenName() {
+    return "dlyk_token";
+}

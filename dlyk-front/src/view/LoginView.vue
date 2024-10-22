@@ -1,6 +1,6 @@
 <script>
 import {doPost} from "../http/httpRequest.js";
-import {messageTip} from "../util/util.js";
+import {getTokenName, messageTip} from "../util/util.js";
 
 export default {
   name: "LoginView",
@@ -28,10 +28,17 @@ export default {
           let formData = new FormData();
           formData.append('loginAct', this.user.loginAct);
           formData.append('loginPwd', this.user.loginPwd);
+          formData.append('rememberMe', this.user.rememberMe);
           doPost("/api/login", formData).then(res => {
             console.log(res);
             if (res.data.code === 200) {
               messageTip('登录成功', 'success');
+              // Store the jwt
+              if (this.user.rememberMe === true) {
+                window.localStorage.setItem(getTokenName(), res.data.data);
+              } else {
+                window.sessionStorage.setItem(getTokenName(), res.data.data);
+              }
               // Route to the app main page
               window.location.href = "/dashboard";
             } else {
@@ -73,7 +80,7 @@ export default {
         </el-form-item>
 
         <el-form-item>
-          <el-checkbox label="Remember me" name="rememberMe"></el-checkbox>
+          <el-checkbox label="Remember me" v-model="user.rememberMe"></el-checkbox>
         </el-form-item>
 
       </el-form>

@@ -4,10 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-public class JsonUtils {
+public class JSONUtils {
     private static final ObjectMapper JSON = new ObjectMapper().registerModule(new JavaTimeModule());
 
-    private JsonUtils() {
+    private JSONUtils() {
     }
 
     public static String toJson(Object obj) {

@@ -1,7 +1,7 @@
 package io.github.yeqk97.dlykserver.config.handler;
 
 import io.github.yeqk97.dlykserver.result.R;
-import io.github.yeqk97.dlykserver.utils.JsonUtils;
+import io.github.yeqk97.dlykserver.utils.JSONUtils;
 import io.github.yeqk97.dlykserver.utils.ResponseUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,7 +16,7 @@ import java.io.IOException;
 public class MyAuthenticationFailureHandler implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(final HttpServletRequest request, final HttpServletResponse response, final AuthenticationException exception) throws IOException, ServletException {
-        String json = JsonUtils.toJson(R.FAIL(exception.getMessage()));
+        String json = JSONUtils.toJson(R.FAIL(exception.getMessage()));
         ResponseUtils.write(response, json);
     }
 }
