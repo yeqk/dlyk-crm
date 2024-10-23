@@ -9,4 +9,6 @@ public class Constants {
     public static final long REMEMBER_ME_EXPIRE_TIME = TimeUnit.DAYS.toSeconds(7);
 
     public static final long DEFAULT_EXPIRE_TIME = TimeUnit.MINUTES.toSeconds(30);
+
+    public static final String LOGIN_URI = "/api/login";
 }

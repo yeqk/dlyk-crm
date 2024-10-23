@@ -15,6 +15,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+import static io.github.yeqk97.dlykserver.utils.Constants.LOGIN_URI;
+
 @Configuration
 public class SecurityConfig {
 
@@ -36,14 +38,14 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity, CorsConfigurationSource corsConfigurationSource) throws Exception {
         return httpSecurity
                 .formLogin((formLogin) -> {
-                    formLogin.loginProcessingUrl("/api/login")
+                    formLogin.loginProcessingUrl(LOGIN_URI)
                             .usernameParameter("loginAct")
                             .passwordParameter("loginPwd")
                             .successHandler(authenticationSuccessHandler)
                             .failureHandler(authenticationFailureHandler);
                 })
                 .authorizeRequests((authorizeRequests) -> {
-                    authorizeRequests.requestMatchers("/api/login").permitAll().anyRequest().authenticated();
+                    authorizeRequests.requestMatchers(LOGIN_URI).permitAll().anyRequest().authenticated();
                 })
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> {
