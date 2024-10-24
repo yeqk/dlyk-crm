@@ -11,4 +11,6 @@ public class Constants {
     public static final long DEFAULT_EXPIRE_TIME = TimeUnit.MINUTES.toSeconds(30);
 
     public static final String LOGIN_URI = "/api/login";
+
+    public static final String LOGOUT_URI = "/api/logout";
 }

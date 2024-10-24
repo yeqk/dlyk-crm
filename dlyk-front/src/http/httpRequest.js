@@ -1,5 +1,6 @@
 import axios from 'axios';
-import {getTokenName} from "../util/util.js";
+import {getTokenName, messageConfirm, messageTip, removeTokens} from "../util/util.js";
+import {ElMessage, ElMessageBox} from "element-plus";
 
 axios.defaults.baseURL = "http://localhost:8080"
 
@@ -62,8 +63,17 @@ axios.interceptors.request.use(function (config) {
 
 // Add a response interceptor
 axios.interceptors.response.use(function (response) {
-    // Any status code that lie within the range of 2xx cause this function to trigger
-    // Do something with response data
+    if (response.data.code > 900) { // Token verification failed
+        messageConfirm(response.data.msg + '. 是否重新登录？')
+            .then(() => {
+                removeTokens();
+                window.location.href = "/"
+            })
+            .catch(() => {
+                messageTip("取消去登录", "warning")
+            })
+        return;
+    }
     return response;
 }, function (error) {
     // Any status codes that falls outside the range of 2xx cause this function to trigger

@@ -1,6 +1,6 @@
 <script>
-import {doPost} from "../http/httpRequest.js";
-import {getTokenName, messageTip} from "../util/util.js";
+import {doGet, doPost} from "../http/httpRequest.js";
+import {getTokenName, messageTip, removeTokens} from "../util/util.js";
 
 export default {
   name: "LoginView",
@@ -20,7 +20,24 @@ export default {
     }
   },
 
+  mounted() {
+    this.freeLogin();
+  },
+
   methods: {
+    freeLogin() {
+      console.log("free login")
+      let token = window.localStorage.getItem(getTokenName());
+      if (token) {
+        doGet("api/login/free", {}).then(res => {
+          console.log(res);
+          if (res.data.code === 200) {
+            window.location.href = "/dashboard"
+          }
+        });
+      }
+    },
+
     login() {
       // Validate form before submitting
       this.$refs.loginFormRef.validate(isValid => {
@@ -33,6 +50,10 @@ export default {
             console.log(res);
             if (res.data.code === 200) {
               messageTip('登录成功', 'success');
+
+              // Delete old tokens
+              removeTokens();
+
               // Store the jwt
               if (this.user.rememberMe === true) {
                 window.localStorage.setItem(getTokenName(), res.data.data);

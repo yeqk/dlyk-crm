@@ -7,11 +7,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class UesrController {
+public class UserController {
 
     @GetMapping("/api/login/info")
     public R loginInfo(final Authentication authentication) {
         TUser user = (TUser) authentication.getPrincipal();
         return R.OK(user);
+    }
+
+    @GetMapping("api/login/free")
+    public R freeLogin() {
+        return R.OK();
     }
 }

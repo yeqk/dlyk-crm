@@ -1,6 +1,7 @@
 <script>
 
 import {doGet} from "../http/httpRequest.js";
+import {messageConfirm, messageTip, removeTokens} from "../util/util.js";
 
 export default {
   name: "DashboardView",
@@ -8,6 +9,7 @@ export default {
   data() {
     return {
       isCollapsed: false,
+      user: {}
     };
   },
 
@@ -19,8 +21,27 @@ export default {
 
     loadLoginUser() {
       doGet("/api/login/info", {}).then(res => {
-        console.log(res);
+        this.user = res.data.data;
       })
+    },
+
+    logout() {
+      doGet("/api/logout", {}).then(res => {
+        if (res.data.code === 200) {
+          removeTokens();
+          messageTip("退出成功", "success");
+          window.location.href = "/";
+        } else {
+          messageConfirm("退出异常， 是否强制退出？")
+              .then(() => {
+                removeTokens();
+                window.location.href = "/"
+              })
+              .catch(() => {
+                messageTip("取消强制退出", "warning")
+              })
+        }
+      });
     },
   },
 
@@ -168,13 +189,14 @@ export default {
         <el-icon class="foldButton" @click="showMenu"><Fold /></el-icon>
         <el-dropdown :hide-on-click="false">
           <span class="el-dropdown-link">
-            Dropdown List<el-icon class="el-icon--right"><arrow-down /></el-icon>
+            {{ user.name }}
+            <el-icon class="el-icon--right"><arrow-down /></el-icon>
           </span>
           <template #dropdown>
             <el-dropdown-menu>
               <el-dropdown-item>我的资料</el-dropdown-item>
               <el-dropdown-item>修改密码</el-dropdown-item>
-              <el-dropdown-item divided>退出登录</el-dropdown-item>
+              <el-dropdown-item divided @click="logout">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>

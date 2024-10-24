@@ -37,7 +37,7 @@ public class JWTUtils {
      * 验证jwt
      *
      */
-    public static Boolean verifyJWT(String jwt) {
+    public static boolean verifyJWT(String jwt) {
         try {
             JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(SECRET)).build();
 
