@@ -68,6 +68,7 @@ export default {
           text-color="#fff"
           style="border-right: 0px solid;"
           :unique-opened="true"
+          :router="true"
           :collapse="isCollapsed"
           :collapse-transition="false">
 
@@ -154,13 +155,9 @@ export default {
             <el-icon><Avatar /></el-icon>
             <span>用户管理</span>
           </template>
-          <el-menu-item index="7-1">
+          <el-menu-item index="dashboard/user">
             <el-icon><OfficeBuilding /></el-icon>
-            市场活动
-          </el-menu-item>
-          <el-menu-item index="7-2">
-            <el-icon><OfficeBuilding /></el-icon>
-            市场统计
+            用户管理
           </el-menu-item>
         </el-sub-menu>
 
@@ -202,7 +199,9 @@ export default {
         </el-dropdown>
       </el-header>
 
-      <el-main>Main</el-main>
+      <el-main>
+        <router-view/>
+      </el-main>
 
       <el-footer>@Copyright 2024</el-footer>
 
