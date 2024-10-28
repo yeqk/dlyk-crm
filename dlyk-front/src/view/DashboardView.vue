@@ -155,7 +155,7 @@ export default {
             <el-icon><Avatar /></el-icon>
             <span>用户管理</span>
           </template>
-          <el-menu-item index="dashboard/user">
+          <el-menu-item index="/dashboard/user">
             <el-icon><OfficeBuilding /></el-icon>
             用户管理
           </el-menu-item>
@@ -214,6 +214,9 @@ export default {
 <style scoped>
 .el-aside {
   background: black;
+}
+
+.el-container {
   height: 100vh;
 }
 

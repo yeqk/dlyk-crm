@@ -1,9 +1,13 @@
 package io.github.yeqk97.dlykserver.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import lombok.Getter;
@@ -56,14 +60,16 @@ public class TUser implements UserDetails {
     @Column(name = "create_time")
     private Instant createTime;
 
-    @Column(name = "create_by")
-    private Integer createBy;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "create_by")
+    private TUser createBy;
 
     @Column(name = "edit_time")
     private Instant editTime;
 
-    @Column(name = "edit_by")
-    private Integer editBy;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "edit_by")
+    private TUser editBy;
 
     @Column(name = "last_login_time")
     private Instant lastLoginTime;

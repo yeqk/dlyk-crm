@@ -13,4 +13,6 @@ public class Constants {
     public static final String LOGIN_URI = "/api/login";
 
     public static final String LOGOUT_URI = "/api/logout";
+
+    public static final int PAGE_SIZE = 10;
 }
