@@ -1,6 +1,6 @@
 <script>
-import {doGet, doPost} from "../http/httpRequest.js";
-import {getTokenName, messageTip, removeTokens} from "../util/util.js";
+import {doDelete, doGet, doPost, doPut} from "../http/httpRequest.js";
+import {getTokenName, messageConfirm, messageTip, removeTokens} from "../util/util.js";
 
 export default {
   name: "UserView",
@@ -15,7 +15,8 @@ export default {
       },
       userList: [{}],
       userDialogVisible: false,
-      userQuery: {},
+      userDto: {},
+      userIdList: [],
       options:[
         {
           label: "是",
@@ -68,7 +69,11 @@ export default {
 
   methods: {
     handleSelectionChange(selection) {
-      console.log(selection);
+      this.userIdList = [];
+      selection.forEach(data => {
+        let userId = data.id;
+        this.userIdList.push(userId);
+      });
     },
 
     goToPage(page) {
@@ -86,35 +91,99 @@ export default {
       });
     },
 
+    addNewUser() {
+      this.userDialogVisible = true;
+      this.userDto = {};
+    },
+
     viewUser(id) {
-      console.log(id);
       this.$router.push("/dashboard/user/" + id);
     },
 
     editUser(id) {
-      console.log(id);
+      this.userDialogVisible = true;
+      this.loadUser(id);
     },
 
     deleteUser(id) {
-      console.log(id);
+      messageConfirm("您确定要删除该数据吗？")
+        .then(() => {
+          doDelete("/api/users/" + id, {}).then(res => {
+            if (res.data.code === 200) {
+              messageTip("删除成功", "success");
+              this.reload();
+            } else {
+              messageTip("删除失败， 原因：" + res.data.msg, "error");
+            }
+          });
+        })
+        .catch(() => {
+          messageTip("取消删除", "warning");
+        });
     },
 
-    submitAddUserForm() {
+    batchDeleteUsers() {
+      if (this.userIdList <= 0) {
+        messageTip("请选择要删除的数据", "warning");
+        return;
+      }
+
+      let ids = this.userIdList.join(",");
+      messageConfirm("您确定要删除该数据吗？")
+          .then(() => {
+            doDelete("/api/users", {ids: ids}).then(res => {
+              if (res.data.code === 200) {
+                messageTip("批量删除成功", "success");
+                this.reload();
+              } else {
+                messageTip("批量删除失败， 原因：" + res.data.msg, "error");
+              }
+            });
+          })
+          .catch(() => {
+            messageTip("取消批量删除", "warning");
+          });
+    },
+
+    loadUser(id) {
+      doGet("/api/users/" + id).then(res => {
+        if (res.data.code === 200) {
+          this.userDto = res.data.data;
+          this.userDto.loginPwd = "";
+        }
+      });
+    },
+
+    submitUserForm() {
       // Validate form before submitting
       this.$refs.addUserFormRef.validate(isValid => {
         if (isValid) {
           let formData = new FormData();
-          for (let field in this.userQuery) {
-            formData.append(field, this.userQuery[field]);
-          }
-          doPost("/api/users", formData).then(res => {
-            if (res.data.code === 200) {
-              messageTip("提交成功", "success");
-              this.reload();
-            } else {
-              messageTip("提交失败", "error");
+          for (let field in this.userDto) {
+            if (this.userDto[field] !== null && this.userDto[field] !== undefined) {
+              formData.append(field, this.userDto[field]);
             }
-          });
+          }
+
+          if (this.userDto.id > 0) { // Edit
+            doPut("/api/users", formData).then(res => {
+              if (res.data.code === 200) {
+                messageTip("编辑成功", "success");
+                this.reload();
+              } else {
+                messageTip("编辑失败", "error");
+              }
+            });
+          } else {
+            doPost("/api/users", formData).then(res => {
+              if (res.data.code === 200) {
+                messageTip("提交成功", "success");
+                this.reload();
+              } else {
+                messageTip("提交失败", "error");
+              }
+            });
+          }
         }
       });
     }
@@ -123,8 +192,8 @@ export default {
 </script>
 
 <template>
-  <el-button type="primary" @click="userDialogVisible = true">添加用户</el-button>
-  <el-button type="danger">批量删除</el-button>
+  <el-button type="primary" @click="addNewUser">添加用户</el-button>
+  <el-button type="danger" @click="batchDeleteUsers">批量删除</el-button>
   <el-table
       :data="userList"
       style="width: 100%"
@@ -147,31 +216,34 @@ export default {
   </el-table>
   <el-pagination background layout="prev, pager, next" :total="page.totalElements" :page-size="page.size" @prev-click="goToPage" @next-click="goToPage" @current-change="goToPage" />
 
-  <el-dialog v-model="userDialogVisible" title="添加用户" width="55%" center draggable>
+  <el-dialog v-model="userDialogVisible" :title="userDto.id > 0 ? '编辑用户' : '添加用户'" width="55%" center draggable>
 
-    <el-form ref="addUserFormRef" :model="userQuery" label-width="110px" :rules="userRules">
+    <el-form ref="addUserFormRef" :model="userDto" label-width="110px" :rules="userRules">
       <el-form-item label="账号" prop="loginAct">
-        <el-input v-model="userQuery.loginAct"/>
+        <el-input v-model="userDto.loginAct"/>
       </el-form-item>
 
-      <el-form-item label="密码" prop="loginPwd">
-        <el-input type="password" v-model="userQuery.loginPwd" show-password/>
+      <el-form-item label="密码" v-if="userDto.id > 0"> <!-- No validation if edit -->
+        <el-input type="password" v-model="userDto.loginPwd" show-password/>
+      </el-form-item>
+      <el-form-item label="密码" prop="loginPwd" v-else>
+        <el-input type="password" v-model="userDto.loginPwd" show-password/>
       </el-form-item>
 
       <el-form-item label="姓名" prop="name">
-        <el-input v-model="userQuery.name"/>
+        <el-input v-model="userDto.name"/>
       </el-form-item>
 
       <el-form-item label="手机" prop="phone">
-        <el-input v-model="userQuery.phone"/>
+        <el-input v-model="userDto.phone"/>
       </el-form-item>
 
       <el-form-item label="邮箱" prop="email">
-        <el-input v-model="userQuery.email"/>
+        <el-input v-model="userDto.email"/>
       </el-form-item>
 
       <el-form-item label="账号未过期" prop="accountNoExpired">
-        <el-select v-model="userQuery.accountNoExpired" placeholder="请选择">
+        <el-select v-model="userDto.accountNoExpired" placeholder="请选择">
           <el-option
               v-for="item in options"
               :key="item.value"
@@ -182,7 +254,7 @@ export default {
       </el-form-item>
 
       <el-form-item label="密码未过期" prop="credentialsNoExpired">
-        <el-select v-model="userQuery.credentialsNoExpired" placeholder="请选择">
+        <el-select v-model="userDto.credentialsNoExpired" placeholder="请选择">
           <el-option
               v-for="item in options"
               :key="item.value"
@@ -193,7 +265,7 @@ export default {
       </el-form-item>
 
       <el-form-item label="账号未锁定" prop="accountNoLocked">
-        <el-select v-model="userQuery.accountNoLocked" placeholder="请选择">
+        <el-select v-model="userDto.accountNoLocked" placeholder="请选择">
           <el-option
               v-for="item in options"
               :key="item.value"
@@ -204,7 +276,7 @@ export default {
       </el-form-item>
 
       <el-form-item label="账号是否可用" prop="accountEnabled">
-        <el-select v-model="userQuery.accountEnabled" placeholder="请选择">
+        <el-select v-model="userDto.accountEnabled" placeholder="请选择">
           <el-option
               v-for="item in options"
               :key="item.value"
@@ -217,7 +289,7 @@ export default {
 
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="submitAddUserForm">提交</el-button>
+        <el-button @click="submitUserForm">提交</el-button>
         <el-button type="primary" @click="userDialogVisible = false">关闭</el-button>
       </div>
     </template>

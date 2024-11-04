@@ -1,6 +1,7 @@
 package io.github.yeqk97.dlykserver.model.dto;
 
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.Instant;
 

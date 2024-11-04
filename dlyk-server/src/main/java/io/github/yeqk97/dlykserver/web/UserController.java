@@ -6,12 +6,15 @@ import io.github.yeqk97.dlykserver.result.R;
 import io.github.yeqk97.dlykserver.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -53,4 +56,22 @@ public class UserController {
         return R.OK(newUser);
     }
 
+    @PutMapping("/api/users")
+    public R editUser(final UserDto user, final Authentication authentication) {
+        TUser editedBy = (TUser) authentication.getPrincipal();
+        UserDto newUser = userService.editUser(user, editedBy);
+        return R.OK(newUser);
+    }
+
+    @DeleteMapping("/api/users/{id}")
+    public R deleteUser(@PathVariable final Integer id) {
+        userService.deleteUser(id);
+        return R.OK();
+    }
+
+    @DeleteMapping("/api/users")
+    public R batchDeleteUsers(@RequestParam final List<Integer> ids) {
+        userService.batchDeleteUsers(ids);
+        return R.OK();
+    }
 }

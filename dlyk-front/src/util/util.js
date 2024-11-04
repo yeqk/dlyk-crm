@@ -12,7 +12,7 @@ export function messageTip(message, type) {
 export function messageConfirm(message) {
     return ElMessageBox.confirm(
         message,
-        'Warning',
+        '系统提醒',
         {
             confirmButtonText: 'OK',
             cancelButtonText: 'Cancel',
