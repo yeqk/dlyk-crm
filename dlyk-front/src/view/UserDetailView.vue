@@ -71,7 +71,7 @@ export default {
     </el-form-item>
 
     <el-form-item label="创建人">
-      <el-input :model-value="userDetail.createBy?.name || ''" disabled/>
+      <el-input :model-value="userDetail.createBy" disabled/>
     </el-form-item>
 
     <el-form-item label="编辑时间">
@@ -79,7 +79,7 @@ export default {
     </el-form-item>
 
     <el-form-item label="编辑人">
-      <el-input :model-value="userDetail.editBy?.name || ''" disabled/>
+      <el-input :model-value="userDetail.editBy" disabled/>
     </el-form-item>
 
     <el-form-item label="最近登录时间">

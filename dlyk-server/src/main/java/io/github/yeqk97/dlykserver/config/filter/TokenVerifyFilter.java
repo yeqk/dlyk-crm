@@ -31,12 +31,12 @@ import static io.github.yeqk97.dlykserver.utils.Constants.REMEMBER_ME_EXPIRE_TIM
 @Component
 public class TokenVerifyFilter extends OncePerRequestFilter {
 
-    private RedisService redisService;
+    private final RedisService redisService;
 
     /**
      * Provided by spring boot
      */
-    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+    private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     public TokenVerifyFilter(final RedisService redisService, final ThreadPoolTaskExecutor threadPoolTaskExecutor) {
         this.redisService = redisService;

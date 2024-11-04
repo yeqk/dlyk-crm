@@ -9,8 +9,20 @@ export default {
   data() {
     return {
       isCollapsed: false,
-      user: {}
+      user: {},
+      isRouterAlive: true
     };
+  },
+
+  provide() {
+    return {
+      reload: () => {
+        this.isRouterAlive = false;
+        this.$nextTick(function () {
+          this.isRouterAlive = true;
+        })
+      },
+    }
   },
 
   methods: {
@@ -200,7 +212,7 @@ export default {
       </el-header>
 
       <el-main>
-        <router-view/>
+        <router-view v-if="isRouterAlive"/>
       </el-main>
 
       <el-footer>@Copyright 2024</el-footer>

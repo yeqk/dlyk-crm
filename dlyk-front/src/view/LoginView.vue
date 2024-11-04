@@ -10,10 +10,10 @@ export default {
       user : {},
       loginRules: {
         loginAct: [
-          { required: true, message: 'Please input username', trigger: 'blur' }
+          { required: true, message: 'Username is required', trigger: 'blur' }
         ],
         loginPwd: [
-          {required: true, message: 'Please input password', trigger: 'blur'},
+          {required: true, message: 'Password is required', trigger: 'blur'},
           { min: 6, max: 16, message: 'Length should be 6 to 16', trigger: 'blur' }
         ]
       }
@@ -26,7 +26,6 @@ export default {
 
   methods: {
     freeLogin() {
-      console.log("free login")
       let token = window.localStorage.getItem(getTokenName());
       if (token) {
         doGet("api/login/free", {}).then(res => {
@@ -47,7 +46,6 @@ export default {
           formData.append('loginPwd', this.user.loginPwd);
           formData.append('rememberMe', this.user.rememberMe);
           doPost("/api/login", formData).then(res => {
-            console.log(res);
             if (res.data.code === 200) {
               messageTip('登录成功', 'success');
 
@@ -88,11 +86,11 @@ export default {
 
       <el-form ref="loginFormRef" :model="user" label-width="120px" :rules="loginRules">
 
-        <el-form-item label="Username" prop="loginAct">
+        <el-form-item label="账号" prop="loginAct">
           <el-input v-model="user.loginAct" />
         </el-form-item>
 
-        <el-form-item label="Password" prop="loginPwd">
+        <el-form-item label="密码" prop="loginPwd">
           <el-input type="password" v-model="user.loginPwd" show-password/>
         </el-form-item>
 

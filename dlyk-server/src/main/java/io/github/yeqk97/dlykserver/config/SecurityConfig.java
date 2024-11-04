@@ -24,11 +24,11 @@ import static io.github.yeqk97.dlykserver.utils.Constants.LOGOUT_URI;
 @Configuration
 public class SecurityConfig {
 
-    private AuthenticationSuccessHandler authenticationSuccessHandler;
+    private final AuthenticationSuccessHandler authenticationSuccessHandler;
 
-    private AuthenticationFailureHandler authenticationFailureHandler;
+    private final AuthenticationFailureHandler authenticationFailureHandler;
 
-    private LogoutSuccessHandler logoutSuccessHandler;
+    private final LogoutSuccessHandler logoutSuccessHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
