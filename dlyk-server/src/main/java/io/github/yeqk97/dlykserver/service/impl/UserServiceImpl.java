@@ -3,11 +3,12 @@ package io.github.yeqk97.dlykserver.service.impl;
 import io.github.yeqk97.dlykserver.model.TUser;
 import io.github.yeqk97.dlykserver.model.dto.UserDto;
 import io.github.yeqk97.dlykserver.repository.TUserRepository;
-import io.github.yeqk97.dlykserver.result.R;
+import io.github.yeqk97.dlykserver.repository.specification.UserSpecification;
 import io.github.yeqk97.dlykserver.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,7 +31,7 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    private static Function<TUser, UserDto> toUserDto = u -> {
+    public static Function<TUser, UserDto> toUserDto = u -> {
         UserDto userDto = new UserDto();
         BeanUtils.copyProperties(u, userDto);
         userDto.setCreateBy(u.getCreateBy() == null ? null : u.getCreateBy().getName());
@@ -56,7 +57,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Page<UserDto> listUsers(final Integer current) {
-        return userRepository.findAll(Pageable.ofSize(PAGE_SIZE).withPage(current)).map(toUserDto);
+        TUser user = (TUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return userRepository.findAll(UserSpecification.filterByScope(user), Pageable.ofSize(PAGE_SIZE).withPage(current)).map(toUserDto);
     }
 
     @Override

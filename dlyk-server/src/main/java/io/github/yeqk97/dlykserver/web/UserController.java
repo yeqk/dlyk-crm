@@ -5,6 +5,7 @@ import io.github.yeqk97.dlykserver.model.dto.UserDto;
 import io.github.yeqk97.dlykserver.result.R;
 import io.github.yeqk97.dlykserver.service.UserService;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

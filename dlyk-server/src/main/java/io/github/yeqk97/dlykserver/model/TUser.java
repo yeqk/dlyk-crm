@@ -1,6 +1,5 @@
 package io.github.yeqk97.dlykserver.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,6 +8,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
@@ -36,6 +37,7 @@ public class TUser implements UserDetails {
     @Column(name = "login_act", length = 32)
     private String loginAct;
 
+    @JsonIgnore
     @Column(name = "login_pwd", length = 64)
     private String loginPwd;
 
@@ -63,6 +65,7 @@ public class TUser implements UserDetails {
     @Column(name = "create_time")
     private Instant createTime;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "create_by")
     private TUser createBy;
@@ -70,6 +73,7 @@ public class TUser implements UserDetails {
     @Column(name = "edit_time")
     private Instant editTime;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "edit_by")
     private TUser editBy;
@@ -77,8 +81,14 @@ public class TUser implements UserDetails {
     @Column(name = "last_login_time")
     private Instant lastLoginTime;
 
-    @Transient
-    private List<String> roleList = new ArrayList<>();
+    @ManyToMany
+    @JsonIgnore
+    @JoinTable(
+            name = "t_user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private List<TRole> roles = new ArrayList<>();
 
     @Transient
     private List<String> permissionList = new ArrayList<>();
@@ -87,7 +97,7 @@ public class TUser implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorities = new ArrayList<>();
-        this.getRoleList().forEach(role -> authorities.add(new SimpleGrantedAuthority(role)));
+        this.getRoles().forEach(role -> authorities.add(new SimpleGrantedAuthority(role.getRole())));
         this.getPermissionList().forEach(permission -> authorities.add(new SimpleGrantedAuthority(permission)));
         return authorities;
     }
@@ -126,5 +136,10 @@ public class TUser implements UserDetails {
     @Override
     public boolean isEnabled() {
         return this.getAccountEnabled() == 1;
+    }
+
+    @JsonIgnore
+    public boolean isAdmin() {
+        return roles.stream().anyMatch(r -> r.getRole().equals("admin"));
     }
 }
