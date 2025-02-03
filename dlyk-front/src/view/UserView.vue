@@ -93,7 +93,12 @@ export default {
 
     addNewUser() {
       this.userDialogVisible = true;
-      this.userDto = {};
+      this.userDto = {
+        accountNoExpired: 1,
+        credentialsNoExpired: 1,
+        accountNoLocked: 1,
+        accountEnabled: 1
+      };
     },
 
     viewUser(id) {

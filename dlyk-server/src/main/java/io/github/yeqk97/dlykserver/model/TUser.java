@@ -82,7 +82,6 @@ public class TUser implements UserDetails {
     private Instant lastLoginTime;
 
     @ManyToMany
-    @JsonIgnore
     @JoinTable(
             name = "t_user_role",
             joinColumns = @JoinColumn(name = "user_id"),
