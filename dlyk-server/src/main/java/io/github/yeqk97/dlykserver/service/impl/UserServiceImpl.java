@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public static Function<TUser, UserDto> toUserDto = u -> {
+    private static final Function<TUser, UserDto> toUserDto = u -> {
         UserDto userDto = new UserDto();
         BeanUtils.copyProperties(u, userDto);
         userDto.setCreateBy(u.getCreateBy() == null ? null : u.getCreateBy().getName());

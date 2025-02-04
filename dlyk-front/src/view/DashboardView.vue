@@ -89,7 +89,7 @@ export default {
             <el-icon><OfficeBuilding /></el-icon>
             <span>市场活动</span>
           </template>
-          <el-menu-item index="1-1">
+          <el-menu-item index="/dashboard/activity">
             <el-icon><OfficeBuilding /></el-icon>
             市场活动
           </el-menu-item>
